@@ -5,12 +5,14 @@ using System.Runtime.CompilerServices;
 using System.ComponentModel.Design;
 using System.Diagnostics.Metrics;
 using System.Xml.Linq;
+using System.Text;
 
 public class dictionarys
 {
 
     Dictionary<string, string> TranslationSet = new Dictionary<string, string>();
     string input;
+    StringBuilder output = new StringBuilder();
 
     public void Menu()
     {
@@ -57,14 +59,17 @@ public class dictionarys
                 if (TranslationSet.ContainsKey(character.ToString()))
                 {
                     Console.Write(TranslationSet[character.ToString()] + "");
+                    output.Append(TranslationSet[character.ToString()] + "");
                 }
                 // Separates Morse code characters with spaces to make it readable
                 Console.Write(" ");
+                output.Append(" ");
 
             }
 
             // New line for different words
             Console.Write("/");
+            output.Append("/");
         }
 
 
@@ -84,10 +89,12 @@ public class dictionarys
     //sending outputs to a file morse.txt , english .txt
     public void LoggingOutputs()
     {
+
+
         //users origonal input, what was outputed 
-        string data = $"{input},{input}";
+        string data = $"{input},{output},{DateTime.Now}";
        
-        File.WriteAllText("outputs.txt", data);  // Create a file and write the content of writeText to it
+        File.WriteAllText("Translation_log.txt", data);  // Create a file and write the content of writeText to it
     }
 
 
@@ -96,6 +103,8 @@ public class dictionarys
         Console.WriteLine("Write the text that you would like to be translated into English\n");
         string InputedMorseCode = Console.ReadLine();
         Console.WriteLine("You entered:", InputedMorseCode);
+
+        string[] morseInput = InputedMorseCode.Split(new String[] { "  " }, StringSplitOptions.RemoveEmptyEntries);
 
     }
     public void FILEandDICTIONARY()
