@@ -6,6 +6,10 @@ using System.ComponentModel.Design;
 using System.Diagnostics.Metrics;
 using System.Xml.Linq;
 using System.Text;
+using System.Security.Cryptography;
+using System.IO.Compression;
+using System.Security.Cryptography.X509Certificates;
+using System.Diagnostics.Tracing;
 
 public class dictionarys
 {
@@ -13,14 +17,24 @@ public class dictionarys
     Dictionary<string, string> TranslationSet = new Dictionary<string, string>();
     string input;
     StringBuilder output = new StringBuilder();
+    string LogFile = "Translation_log.txt";
+    string compressedFile = "Translation_log_Compressed.gz";
+    string Uncompressed = "Translation_log_Decompressed.txt";
+
 
     public void Menu()
     {
+    
         //clearing loggin veribles so they can be used again 
         output.Clear();
         input = "";
 
-        Console.WriteLine("\n**********************************\nChose one of the follwing options\n1)English-MorseCode\n2)Morse Code-English\n");
+        Console.WriteLine("\n**********************************\nChose one of the follwing options" +
+            "\n1)English-MorseCode" +
+            "\n2)Morse Code-English" +
+            "\n3)Encyption" +
+            "\n4)Compress File\n" +
+            "5)Uncompress");
         string MenuUinputConsole = Console.ReadLine();
 
         if (MenuUinputConsole == "1")
@@ -32,12 +46,71 @@ public class dictionarys
         else if (MenuUinputConsole == "2")
         {
             MORSEenglish();
+        }else if(MenuUinputConsole=="3"){
+            Encyption();
+        }
+        else if(MenuUinputConsole=="4"){
+            FileCompression();
+        }else if (MenuUinputConsole=="5")
+        {
+            FileDecompression();
         }
         else
         {
             Console.WriteLine("Invalid output");
             Menu();
         }
+    }
+
+    public void FileCompression()
+    {
+
+
+        try
+        {
+            using (FileStream uncompressedStream = File.Open(LogFile, FileMode.Open))
+            using (FileStream compressedStream = File.Create(compressedFile))
+            {
+                using (var compressor = new GZipStream(compressedStream, CompressionMode.Compress))
+                {
+                    uncompressedStream.CopyTo(compressor);
+                }
+            }
+            Console.WriteLine("File compression completed.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occurred during file compression: " + ex.Message);
+        }
+
+        // Loop back to the menu
+        Menu();
+    }
+
+
+    public void FileDecompression()
+    {
+        //taking the previously compressed .gz file
+        using FileStream Compressed = File.Open(compressedFile, FileMode.Open);
+
+        //creating uncompressed file using the info given in verible "Uncompressed "
+        using FileStream Decompressed = File.Create(Uncompressed);
+
+        //Uncompressing and input into new file 
+        using var decompressor = new GZipStream(Compressed, CompressionMode.Decompress);
+        decompressor.CopyTo(Decompressed);
+
+        //Loop back to menu
+        Menu();
+
+    }
+
+    public void Encyption()
+    {
+        Aes aes= Aes.Create();
+        Console.Clear();
+        Console.WriteLine("");
+        Menu();
     }
 
     //turning Eglish to morse code, passing in dictionary "FILEandDICTIONARY"
@@ -100,7 +173,8 @@ public class dictionarys
         //users origonal input, what was outputed 
         string data = $"{"*******************************"},{"\nOrigonal Input:"},{input},{"\nTranslated output:"},{output},{"\nDate and time:"},{DateTime.Now},{"\n"},{"**************************************"}";
 
-        File.AppendAllText("Translation_log.txt", data);  // Create a file and write the content of writeText to it
+
+        File.AppendAllText(LogFile, data);  // Create a file and write the content of writeText to it
     }
 
 
@@ -209,7 +283,7 @@ public void FILEandDICTIONARY()
                     TranslationSet.Add(letter, morseCode);
                 }
             }
-        }
+        }   
 
 
     }
