@@ -20,16 +20,23 @@ public class dictionarys
     string LogFile = "Translation_log.txt";
     string compressedFile = "Translation_log_Compressed.gz";
     string Uncompressed = "Translation_log_Decompressed.txt";
+    string LastInstance;
+    string data;
 
 
     public void Menu()
     {
-    
+        //this makes the console a lot clearer while not losing the last output to the user 
+        Console.Clear();
+        Console.WriteLine("\nLast translation done:\n" + data + "\n");
+
         //clearing loggin veribles so they can be used again 
         output.Clear();
         input = "";
 
-        Console.WriteLine("\n**********************************\nChose one of the follwing options" +
+        Console.WriteLine("\nMain  Menu\n" +
+            "**********************************\n" +
+            "Chose one of the follwing options" +
             "\n1)English-MorseCode" +
             "\n2)Morse Code-English" +
             "\n3)Encyption" +
@@ -76,7 +83,7 @@ public class dictionarys
                     uncompressedStream.CopyTo(compressor);
                 }
             }
-            Console.WriteLine("File compression completed.");
+            Console.WriteLine("File compression completed.\nStored as:"+ compressedFile);
         }
         catch (Exception ex)
         {
@@ -118,6 +125,9 @@ public class dictionarys
 
     {
         {
+            //this makes the console a lot clearer while not losing the last output to the user 
+            Console.Clear();
+            Console.WriteLine("\nLast translation done:\n" + data + "\n");
             FILEandDICTIONARY();
 
             Console.WriteLine("\nWrite the text that you would like to be translated into morse code\n");
@@ -155,6 +165,7 @@ public class dictionarys
 
             //Loop back to menu( pervents restart after each translation )
             Console.WriteLine("\n\nStoring in \"outputs.txt\"...\n\nRerouting.....\n");
+            string LastInstance = output.ToString();
             LoggingOutputs();
             Menu();
 
@@ -168,10 +179,11 @@ public class dictionarys
     //sending outputs to a file morse.txt , english .txt
     public void LoggingOutputs()
     {
+       
 
 
         //users origonal input, what was outputed 
-        string data = $"{"*******************************"},{"\nOrigonal Input:"},{input},{"\nTranslated output:"},{output},{"\nDate and time:"},{DateTime.Now},{"\n"},{"**************************************"}";
+        data = $"{"*******************************"},{"\nOrigonal Input:"},{input},{"\nTranslated output:"},{output},{"\nDate and time:"},{DateTime.Now},{"\n"},{"**************************************"}";
 
 
         File.AppendAllText(LogFile, data);  // Create a file and write the content of writeText to it
@@ -180,8 +192,13 @@ public class dictionarys
 
     public void MORSEenglish()
     {
+        //this makes the console a lot clearer while not losing the last output to the user 
+        Console.Clear();
+        Console.WriteLine("\nLast translation done:\n" + data +  "\n");
+
 
         FILEandDICTIONARY();
+        
 
         Console.WriteLine("Write the Morse code that you would like to be translated into English:");
         string USERinput = Console.ReadLine();
@@ -227,7 +244,7 @@ public class dictionarys
 
 
 
-public void FILEandDICTIONARY()
+    public void FILEandDICTIONARY()
     {
 
         Console.WriteLine("\n***************\nWhich would you like to do ?\n1)American\n2)Internatioal");
